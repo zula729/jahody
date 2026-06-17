@@ -1,0 +1,1301 @@
+<!doctype html>
+<html lang="cs">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jahodová pokladna</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --bg-page: #f5f5f0;
+        --bg-card: #ffffff;
+        --bg-secondary: #f1efe8;
+        --text-primary: #1a1a18;
+        --text-secondary: #5f5e5a;
+        --border: rgba(0, 0, 0, 0.12);
+        --border-md: rgba(0, 0, 0, 0.22);
+        --green: #1d9e75;
+        --green-dark: #0f6e56;
+        --green-light: #e1f5ee;
+        --green-text: #0f6e56;
+        --amber: #ba7517;
+        --amber-light: #faeeda;
+        --amber-text: #633806;
+        --red: #e24b4a;
+        --red-dark: #a32d2d;
+        --red-light: #fcebeb;
+        --red-text: #791f1f;
+        --blue: #185fa5;
+        --radius-md: 8px;
+        --radius-lg: 12px;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg-page: #1c1c1a;
+          --bg-card: #262624;
+          --bg-secondary: #2c2c2a;
+          --text-primary: #f0ede8;
+          --text-secondary: #a0a09a;
+          --border: rgba(255, 255, 255, 0.1);
+          --border-md: rgba(255, 255, 255, 0.2);
+          --green-light: #04342c;
+          --green-text: #5dcaa5;
+          --amber-light: #412402;
+          --amber-text: #ef9f27;
+          --red-light: #501313;
+          --red-text: #f09595;
+        }
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: var(--bg-page);
+        color: var(--text-primary);
+        min-height: 100vh;
+        font-size: 16px;
+        line-height: 1.5;
+      }
+
+      .app-header {
+        background: var(--bg-card);
+        border-bottom: 0.5px solid var(--border);
+        padding: 14px 16px 10px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        position: sticky;
+        top: 0;
+        z-index: 20;
+      }
+      .app-header .logo {
+        font-size: 22px;
+      }
+      .app-header h1 {
+        font-size: 17px;
+        font-weight: 600;
+        flex: 1;
+      }
+      .shift-badge {
+        font-size: 12px;
+        font-weight: 500;
+        padding: 3px 9px;
+        border-radius: 20px;
+        background: var(--green-light);
+        color: var(--green-text);
+        display: none;
+      }
+      .shift-badge.visible {
+        display: inline-block;
+      }
+
+      .tab-bar {
+        display: flex;
+        background: var(--bg-card);
+        border-bottom: 0.5px solid var(--border);
+        position: sticky;
+        top: 57px;
+        z-index: 19;
+      }
+      .tab {
+        flex: 1;
+        padding: 10px 2px 8px;
+        font-size: 10px;
+        font-weight: 500;
+        text-align: center;
+        cursor: pointer;
+        color: var(--text-secondary);
+        border: none;
+        background: none;
+        border-bottom: 2px solid transparent;
+        transition:
+          color 0.15s,
+          border-color 0.15s;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .tab i {
+        display: block;
+        font-size: 21px;
+        margin-bottom: 1px;
+      }
+      .tab.active {
+        color: var(--green);
+        border-bottom-color: var(--green);
+      }
+
+      .section {
+        display: none;
+        padding: 14px 14px 90px;
+      }
+      .section.active {
+        display: block;
+      }
+
+      .card {
+        background: var(--bg-card);
+        border: 0.5px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 14px 16px;
+        margin-bottom: 12px;
+      }
+      .card-title {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--text-secondary);
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .card-title i {
+        font-size: 16px;
+      }
+
+      label {
+        display: block;
+        font-size: 13px;
+        color: var(--text-secondary);
+        margin-bottom: 5px;
+        margin-top: 14px;
+      }
+      label:first-of-type {
+        margin-top: 0;
+      }
+
+      input[type="number"],
+      input[type="text"] {
+        width: 100%;
+        font-size: 17px;
+        padding: 11px 13px;
+        border-radius: var(--radius-md);
+        border: 0.5px solid var(--border-md);
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        outline: none;
+        -webkit-appearance: none;
+        appearance: none;
+        transition:
+          border-color 0.15s,
+          box-shadow 0.15s;
+      }
+      input:focus {
+        border-color: var(--green);
+        box-shadow: 0 0 0 3px rgba(29, 158, 117, 0.18);
+        background: var(--bg-card);
+      }
+
+      .btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        padding: 14px;
+        border-radius: var(--radius-md);
+        border: none;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 14px;
+        transition:
+          opacity 0.15s,
+          transform 0.1s,
+          background 0.15s;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .btn:active {
+        transform: scale(0.97);
+      }
+      .btn i {
+        font-size: 18px;
+      }
+      .btn-primary {
+        background: var(--green);
+        color: #fff;
+      }
+      .btn-primary:hover {
+        background: var(--green-dark);
+      }
+      .btn-danger {
+        background: var(--red);
+        color: #fff;
+      }
+      .btn-danger:hover {
+        background: var(--red-dark);
+      }
+      .btn-secondary {
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        border: 0.5px solid var(--border-md);
+      }
+      .btn-secondary:hover {
+        background: var(--bg-card);
+      }
+      .btn-sm {
+        padding: 8px 14px;
+        font-size: 13px;
+        margin-top: 0;
+        width: auto;
+      }
+
+      .tip-hint {
+        border-radius: var(--radius-md);
+        padding: 10px 13px;
+        margin-top: 10px;
+        font-size: 14px;
+        font-weight: 500;
+        display: none;
+        align-items: center;
+        gap: 8px;
+      }
+      .tip-hint i {
+        font-size: 17px;
+      }
+
+      .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+      .stat {
+        background: var(--bg-secondary);
+        border-radius: var(--radius-md);
+        padding: 12px 13px;
+      }
+      .stat-label {
+        font-size: 11px;
+        color: var(--text-secondary);
+        margin-bottom: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+      .stat-value {
+        font-size: 20px;
+        font-weight: 600;
+      }
+      .stat-value.green {
+        color: var(--green);
+      }
+      .stat-value.amber {
+        color: var(--amber);
+      }
+      .stat-value.red {
+        color: var(--red);
+      }
+      .stat-value.blue {
+        color: var(--blue);
+      }
+
+      .shift-active-bar {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 13px;
+        color: var(--green-text);
+        margin-bottom: 12px;
+        font-weight: 500;
+      }
+      .shift-active-bar i {
+        font-size: 16px;
+      }
+
+      .warning {
+        background: var(--amber-light);
+        border-radius: var(--radius-md);
+        padding: 11px 13px;
+        font-size: 14px;
+        color: var(--amber-text);
+        display: flex;
+        gap: 9px;
+        align-items: flex-start;
+        margin-bottom: 12px;
+      }
+      .warning i {
+        flex-shrink: 0;
+        margin-top: 1px;
+        font-size: 17px;
+      }
+
+      .preset-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-bottom: 14px;
+      }
+      .preset-card {
+        background: var(--bg-card);
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 16px 12px;
+        text-align: center;
+        cursor: pointer;
+        transition:
+          border-color 0.15s,
+          background 0.15s,
+          transform 0.1s;
+        -webkit-tap-highlight-color: transparent;
+        position: relative;
+      }
+      .preset-card:active {
+        transform: scale(0.96);
+      }
+      .preset-card:hover {
+        border-color: var(--green);
+      }
+      .preset-card.selected {
+        border-color: var(--green);
+        background: var(--green-light);
+      }
+      .preset-card .preset-weight {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--text-primary);
+        line-height: 1.1;
+      }
+      .preset-card.selected .preset-weight {
+        color: var(--green-text);
+      }
+      .preset-card .preset-price {
+        font-size: 15px;
+        font-weight: 500;
+        color: var(--text-secondary);
+        margin-top: 4px;
+      }
+      .preset-card.selected .preset-price {
+        color: var(--green-text);
+      }
+      .preset-card .preset-check {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        font-size: 16px;
+        color: var(--green);
+        display: none;
+      }
+      .preset-card.selected .preset-check {
+        display: block;
+      }
+
+      .no-presets {
+        text-align: center;
+        padding: 24px 16px;
+        color: var(--text-secondary);
+        font-size: 14px;
+      }
+      .no-presets i {
+        font-size: 36px;
+        display: block;
+        margin-bottom: 8px;
+        opacity: 0.3;
+      }
+
+      .sale-item {
+        padding: 10px 0;
+        border-bottom: 0.5px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .sale-item:last-child {
+        border-bottom: none;
+      }
+      .sale-num {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: var(--green-light);
+        color: var(--green-text);
+        font-size: 12px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .sale-info {
+        flex: 1;
+        min-width: 0;
+      }
+      .sale-main {
+        font-size: 14px;
+        font-weight: 500;
+      }
+      .sale-sub {
+        font-size: 12px;
+        color: var(--text-secondary);
+        margin-top: 1px;
+      }
+      .sale-tip {
+        font-size: 13px;
+        color: var(--amber);
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .undo-btn {
+        background: none;
+        border: none;
+        color: var(--text-secondary);
+        cursor: pointer;
+        padding: 5px;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        border-radius: 6px;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .undo-btn:hover {
+        color: var(--red);
+        background: var(--red-light);
+      }
+
+      .writeoff-item {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 9px 0;
+        border-bottom: 0.5px solid var(--border);
+      }
+      .writeoff-item:last-child {
+        border-bottom: none;
+      }
+      .writeoff-item > i {
+        color: var(--red);
+        font-size: 16px;
+        flex-shrink: 0;
+      }
+
+      .empty {
+        text-align: center;
+        padding: 30px 16px;
+        color: var(--text-secondary);
+      }
+      .empty i {
+        font-size: 42px;
+        margin-bottom: 8px;
+        display: block;
+        opacity: 0.3;
+      }
+      .empty p {
+        font-size: 14px;
+      }
+
+      .summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 0.5px solid var(--border);
+        font-size: 15px;
+      }
+      .summary-row:last-child {
+        border-bottom: none;
+      }
+      .summary-row.total {
+        font-weight: 600;
+        font-size: 16px;
+      }
+      .summary-row .label {
+        color: var(--text-secondary);
+        font-size: 14px;
+      }
+      hr {
+        border: none;
+        border-top: 0.5px solid var(--border);
+        margin: 4px 0;
+      }
+
+      .price-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 0;
+        border-bottom: 0.5px solid var(--border);
+      }
+      .price-item:last-child {
+        border-bottom: none;
+      }
+      .price-info {
+        flex: 1;
+      }
+      .price-main {
+        font-size: 15px;
+        font-weight: 600;
+      }
+      .price-sub {
+        font-size: 13px;
+        color: var(--text-secondary);
+      }
+
+      .preset-form {
+        background: var(--bg-secondary);
+        border-radius: var(--radius-lg);
+        padding: 14px;
+        margin-bottom: 12px;
+      }
+      .preset-form-row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+      .preset-form label {
+        margin-top: 0;
+        font-size: 12px;
+      }
+      .preset-form input {
+        font-size: 15px;
+        padding: 9px 11px;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="app-header">
+      <span class="logo">🍓</span>
+      <h1>Jahodová pokladna</h1>
+      <span class="shift-badge" id="shift-badge">Směna aktivní</span>
+    </header>
+
+    <nav class="tab-bar">
+      <button class="tab active" onclick="showTab('shift')" id="tab-shift">
+        <i class="ti ti-home" aria-hidden="true"></i>Směna
+      </button>
+      <button class="tab" onclick="showTab('sales')" id="tab-sales">
+        <i class="ti ti-shopping-cart" aria-hidden="true"></i>Prodeje
+      </button>
+      <button class="tab" onclick="showTab('history')" id="tab-history">
+        <i class="ti ti-list" aria-hidden="true"></i>Historie
+      </button>
+      <button class="tab" onclick="showTab('summary')" id="tab-summary">
+        <i class="ti ti-chart-bar" aria-hidden="true"></i>Výsledky
+      </button>
+      <button class="tab" onclick="showTab('settings')" id="tab-settings">
+        <i class="ti ti-settings" aria-hidden="true"></i>Nastavení
+      </button>
+    </nav>
+
+    <div class="section active" id="section-shift">
+      <div id="shift-setup">
+        <div class="card">
+          <div class="card-title">
+            <i class="ti ti-coin" aria-hidden="true"></i>Začátek směny
+          </div>
+          <label for="deposit">Záloha, Kč</label>
+          <input
+            type="number"
+            id="deposit"
+            placeholder="0"
+            min="0"
+            inputmode="numeric"
+          />
+          <button class="btn btn-primary" onclick="startShift()">
+            <i class="ti ti-player-play" aria-hidden="true"></i>Začít směnu
+          </button>
+        </div>
+      </div>
+      <div id="shift-info" style="display: none">
+        <div class="shift-active-bar">
+          <i class="ti ti-circle-check" aria-hidden="true"></i>Směna aktivní
+        </div>
+        <div class="stat-grid">
+          <div class="stat">
+            <div class="stat-label">Záloha</div>
+            <div class="stat-value" id="info-deposit">0 Kč</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Prodejů dnes</div>
+            <div class="stat-value green" id="info-sales-count">0</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Tržba (oficiální)</div>
+            <div class="stat-value green" id="info-revenue">0 Kč</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Dýško</div>
+            <div class="stat-value amber" id="info-tips">0 Kč</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">
+            <i class="ti ti-trash" aria-hidden="true"></i>Ztráty (odpis)
+          </div>
+          <label for="writeoff-weight">Váha, kg</label>
+          <input
+            type="number"
+            id="writeoff-weight"
+            placeholder="0.5"
+            min="0"
+            step="0.1"
+            inputmode="decimal"
+          />
+          <button class="btn btn-danger" onclick="addWriteoff()">
+            <i class="ti ti-trash" aria-hidden="true"></i>Odepsat
+          </button>
+        </div>
+        <button class="btn btn-secondary" onclick="endShift()">
+          <i class="ti ti-flag" aria-hidden="true"></i>Ukončit směnu
+        </button>
+      </div>
+    </div>
+
+    <div class="section" id="section-sales">
+      <div id="no-shift-sales" class="warning" style="display: none">
+        <i class="ti ti-alert-circle" aria-hidden="true"></i>
+        <span>Musíš začít směnu</span>
+      </div>
+      <div id="sales-form">
+        <div class="card">
+          <div class="card-title">
+            <i class="ti ti-layout-grid" aria-hidden="true"></i>Výběr
+          </div>
+          <div class="preset-grid" id="preset-grid"></div>
+          <div id="no-presets-hint" style="display: none">
+            <div class="no-presets">
+              <i class="ti ti-tags" aria-hidden="true"></i>
+              <p>Zatím prázdné, přidej položky v nastavení</p>
+            </div>
+            <button
+              class="btn btn-secondary"
+              style="margin-top: 0"
+              onclick="showTab('settings')"
+            >
+              <i class="ti ti-settings" aria-hidden="true"></i>Přejít do
+              nastavení
+            </button>
+          </div>
+        </div>
+
+        <div class="card" id="received-card" style="display: none">
+          <div class="card-title">
+            <i class="ti ti-cash" aria-hidden="true"></i>Platba
+          </div>
+          <div
+            id="selected-preset-info"
+            style="
+              margin-bottom: 12px;
+              padding: 10px 12px;
+              background: var(--green-light);
+              border-radius: var(--radius-md);
+              color: var(--green-text);
+              font-weight: 500;
+              font-size: 14px;
+            "
+          ></div>
+          <label for="sale-received">Od zákazníka, Kč</label>
+          <input
+            type="number"
+            id="sale-received"
+            placeholder="0"
+            min="0"
+            inputmode="numeric"
+          />
+          <div class="tip-hint" id="tip-preview">
+            <i class="ti ti-heart" aria-hidden="true" id="tip-icon"></i>
+            <span id="tip-preview-text"></span>
+          </div>
+          <button class="btn btn-primary" id="add-sale-btn" onclick="addSale()">
+            <i class="ti ti-plus" aria-hidden="true"></i>Přidat prodej
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="section-history">
+      <div class="card">
+        <div class="card-title">
+          <i class="ti ti-shopping-bag" aria-hidden="true"></i>Prodeje za den
+        </div>
+        <div id="sales-list"></div>
+      </div>
+      <div class="card" id="writeoffs-card" style="display: none">
+        <div class="card-title">
+          <i class="ti ti-trash" aria-hidden="true"></i>Odepsáno
+        </div>
+        <div id="writeoffs-list"></div>
+      </div>
+    </div>
+
+    <div class="section" id="section-summary">
+      <div id="summary-content"></div>
+    </div>
+
+    <div class="section" id="section-settings">
+      <div class="card">
+        <div class="card-title">
+          <i class="ti ti-tags" aria-hidden="true"></i>Ceník
+        </div>
+        <div id="price-list"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title" id="preset-form-title">
+          <i class="ti ti-plus" aria-hidden="true"></i>Přidat položku
+        </div>
+        <div class="preset-form">
+          <div class="preset-form-row">
+            <div>
+              <label for="new-weight">Váha, kg</label>
+              <input
+                type="number"
+                id="new-weight"
+                placeholder="0.5"
+                min="0"
+                step="0.1"
+                inputmode="decimal"
+              />
+            </div>
+            <div>
+              <label for="new-price">Cena, Kč</label>
+              <input
+                type="number"
+                id="new-price"
+                placeholder="63"
+                min="0"
+                inputmode="numeric"
+              />
+            </div>
+          </div>
+          <div style="display: flex; gap: 8px">
+            <button
+              class="btn btn-primary btn-sm"
+              style="flex: 1; margin-top: 0"
+              onclick="savePreset()"
+            >
+              <i class="ti ti-check" aria-hidden="true"></i
+              ><span id="preset-save-label">Přidat</span>
+            </button>
+            <button
+              class="btn btn-secondary btn-sm"
+              id="cancel-edit-btn"
+              style="display: none; margin-top: 0"
+              onclick="cancelEditPreset()"
+            >
+              Zpět
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const KEY_STATE = "sb_state_v2";
+      const KEY_PRESETS = "sb_presets_v1";
+
+      function loadState() {
+        try {
+          return JSON.parse(localStorage.getItem(KEY_STATE)) || defaultState();
+        } catch (e) {
+          return defaultState();
+        }
+      }
+      function defaultState() {
+        return {
+          started: false,
+          ended: false,
+          deposit: 0,
+          sales: [],
+          writeoffs: [],
+        };
+      }
+      function loadPresets() {
+        try {
+          const p = JSON.parse(localStorage.getItem(KEY_PRESETS));
+          return (
+            p || [
+              { id: 1, weight: 0.5, price: 63 },
+              { id: 2, weight: 1, price: 125 },
+              { id: 3, weight: 2, price: 250 },
+            ]
+          );
+        } catch (e) {
+          return [];
+        }
+      }
+
+      let state = loadState();
+      let presets = loadPresets();
+      let selectedPresetId = null;
+      let editingPresetId = null;
+
+      function saveState() {
+        localStorage.setItem(KEY_STATE, JSON.stringify(state));
+      }
+      function savePresets() {
+        localStorage.setItem(KEY_PRESETS, JSON.stringify(presets));
+      }
+
+      function fmt(n) {
+        return Number(n).toLocaleString("cs-CZ") + "\u00a0Kč";
+      }
+      function fmtKg(n) {
+        const v = parseFloat(n);
+        if (isNaN(v)) return "0\u00a0kg";
+        return v.toFixed(3).replace(/\.?0+$/, "") + "\u00a0kg";
+      }
+
+      function showTab(t) {
+        document
+          .querySelectorAll(".tab, .section")
+          .forEach((el) => el.classList.remove("active"));
+        document.getElementById("tab-" + t).classList.add("active");
+        document.getElementById("section-" + t).classList.add("active");
+        if (t === "shift") renderShift();
+        if (t === "sales") renderSalesTab();
+        if (t === "history") renderHistory();
+        if (t === "summary") renderSummary();
+        if (t === "settings") renderSettings();
+      }
+
+      function startShift() {
+        const d = parseFloat(document.getElementById("deposit").value) || 0;
+        state = {
+          started: true,
+          ended: false,
+          deposit: d,
+          sales: [],
+          writeoffs: [],
+        };
+        saveState();
+        selectedPresetId = null;
+        renderShift();
+        updateBadge();
+      }
+      function endShift() {
+        if (!confirm("Ukončit směnu? Data budou uložena.")) return;
+        state.ended = true;
+        saveState();
+        showTab("summary");
+        updateBadge();
+      }
+      function newShift() {
+        if (!confirm("Začít novou směnu? Data aktuální směny budou vymazána."))
+          return;
+        state = defaultState();
+        saveState();
+        selectedPresetId = null;
+        showTab("shift");
+        updateBadge();
+      }
+      function updateBadge() {
+        document
+          .getElementById("shift-badge")
+          .classList.toggle("visible", state.started && !state.ended);
+      }
+
+      function calcTotals() {
+        let revenue = 0,
+          tips = 0,
+          weightSold = 0,
+          weightOff = 0;
+        state.sales.forEach((s) => {
+          revenue += parseFloat(s.price) || 0;
+          tips += Math.max(
+            0,
+            (parseFloat(s.received) || 0) - (parseFloat(s.price) || 0),
+          );
+          weightSold += parseFloat(s.weight) || 0;
+        });
+        state.writeoffs.forEach((w) => {
+          weightOff += parseFloat(w.weight) || 0;
+        });
+        return { revenue, tips, weightSold, weightOff };
+      }
+
+      function renderShift() {
+        const setup = document.getElementById("shift-setup");
+        const info = document.getElementById("shift-info");
+        if (!state.started) {
+          setup.style.display = "";
+          info.style.display = "none";
+          return;
+        }
+        setup.style.display = "none";
+        info.style.display = "";
+        const t = calcTotals();
+        document.getElementById("info-deposit").textContent = fmt(
+          state.deposit,
+        );
+        document.getElementById("info-sales-count").textContent =
+          state.sales.length;
+        document.getElementById("info-revenue").textContent = fmt(t.revenue);
+        document.getElementById("info-tips").textContent = fmt(t.tips);
+      }
+
+      function renderSalesTab() {
+        const noShift = document.getElementById("no-shift-sales");
+        const form = document.getElementById("sales-form");
+        if (!state.started || state.ended) {
+          noShift.style.display = "flex";
+          form.style.display = "none";
+          return;
+        }
+        noShift.style.display = "none";
+        form.style.display = "";
+        renderPresetGrid();
+        renderReceivedCard();
+      }
+
+      function renderPresetGrid() {
+        const grid = document.getElementById("preset-grid");
+        const noHint = document.getElementById("no-presets-hint");
+        if (!presets.length) {
+          grid.innerHTML = "";
+          grid.style.display = "none";
+          noHint.style.display = "";
+          return;
+        }
+        noHint.style.display = "none";
+        grid.style.display = "";
+        grid.innerHTML = presets
+          .map((p) => {
+            const sel = p.id === selectedPresetId;
+            return `<div class="preset-card${sel ? " selected" : ""}" onclick="selectPreset(${p.id})" role="button" aria-pressed="${sel}">
+      <i class="ti ti-check preset-check" aria-hidden="true"></i>
+      <div class="preset-weight">${fmtKg(p.weight)}</div>
+      <div class="preset-price">${fmt(p.price)}</div>
+    </div>`;
+          })
+          .join("");
+      }
+
+      function selectPreset(id) {
+        selectedPresetId = selectedPresetId === id ? null : id;
+        renderPresetGrid();
+        renderReceivedCard();
+        if (selectedPresetId) {
+          document.getElementById("sale-received").value = "";
+          document.getElementById("tip-preview").style.display = "none";
+          document.getElementById("sale-received").focus();
+        }
+      }
+
+      function renderReceivedCard() {
+        const card = document.getElementById("received-card");
+        if (!selectedPresetId) {
+          card.style.display = "none";
+          return;
+        }
+        const p = presets.find((x) => x.id === selectedPresetId);
+        if (!p) {
+          card.style.display = "none";
+          return;
+        }
+        card.style.display = "";
+        document.getElementById("selected-preset-info").textContent =
+          fmtKg(p.weight) + " — oficiální cena " + fmt(p.price);
+      }
+
+      function addSale() {
+        if (!state.started || state.ended) {
+          showTab("shift");
+          return;
+        }
+        const p = presets.find((x) => x.id === selectedPresetId);
+        if (!p) {
+          alert("Vyberte položku z ceníku");
+          return;
+        }
+        const r = parseFloat(document.getElementById("sale-received").value);
+        if (isNaN(r) || r < 0) {
+          alert("Zadejte částku přijatou od zákazníka");
+          return;
+        }
+
+        const time = new Date().toLocaleTimeString("cs-CZ", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        state.sales.push({
+          weight: p.weight,
+          price: p.price,
+          received: r,
+          time,
+          presetId: p.id,
+        });
+        saveState();
+
+        document.getElementById("sale-received").value = "";
+        document.getElementById("tip-preview").style.display = "none";
+        selectedPresetId = null;
+        renderPresetGrid();
+        renderReceivedCard();
+        renderShift();
+
+        const btn = document.getElementById("add-sale-btn");
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<i class="ti ti-check"></i>Přidáno!';
+        btn.style.background = "#0F6E56";
+        setTimeout(() => {
+          btn.innerHTML = orig;
+          btn.style.background = "";
+        }, 900);
+      }
+
+      function addWriteoff() {
+        if (!state.started) {
+          alert("Nejdříve začněte směnu.");
+          return;
+        }
+        const w = parseFloat(document.getElementById("writeoff-weight").value);
+        if (isNaN(w) || w <= 0) {
+          alert("Zadejte správnou váhu odpisu");
+          return;
+        }
+        const time = new Date().toLocaleTimeString("cs-CZ", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        state.writeoffs.push({ weight: w, time });
+        saveState();
+        document.getElementById("writeoff-weight").value = "";
+        renderShift();
+        alert("✓ Odepsáno: " + fmtKg(w));
+      }
+
+      function removeSale(i) {
+        if (!confirm("Smazat prodej #" + (i + 1) + "?")) return;
+        state.sales.splice(i, 1);
+        saveState();
+        renderHistory();
+        renderShift();
+      }
+      function removeWriteoff(i) {
+        if (!confirm("Smazat odpis?")) return;
+        state.writeoffs.splice(i, 1);
+        saveState();
+        renderHistory();
+        renderShift();
+      }
+
+      function renderHistory() {
+        const el = document.getElementById("sales-list");
+        if (!state.sales.length) {
+          el.innerHTML =
+            '<div class="empty"><i class="ti ti-basket" aria-hidden="true"></i><p>Zatím žádné prodeje</p></div>';
+        } else {
+          el.innerHTML = state.sales
+            .map((s, i) => {
+              const tip = Math.max(
+                0,
+                (parseFloat(s.received) || 0) - (parseFloat(s.price) || 0),
+              );
+              return `<div class="sale-item">
+        <div class="sale-num">${i + 1}</div>
+        <div class="sale-info">
+          <div class="sale-main">${fmtKg(s.weight)} — ${fmt(s.price)}</div>
+          <div class="sale-sub">Přijato: ${fmt(s.received)} · ${s.time}</div>
+        </div>
+        ${tip > 0 ? `<div class="sale-tip">+${fmt(tip)}</div>` : ""}
+        <button class="undo-btn" onclick="removeSale(${i})" aria-label="Smazat prodej #${i + 1}">
+          <i class="ti ti-x" aria-hidden="true"></i>
+        </button>
+      </div>`;
+            })
+            .join("");
+        }
+        const wCard = document.getElementById("writeoffs-card");
+        const wEl = document.getElementById("writeoffs-list");
+        if (state.writeoffs.length) {
+          wCard.style.display = "";
+          wEl.innerHTML = state.writeoffs
+            .map(
+              (w, i) => `
+      <div class="writeoff-item">
+        <i class="ti ti-trash" aria-hidden="true"></i>
+        <span style="flex:1">Odepsáno: <strong>${fmtKg(w.weight)}</strong></span>
+        <span style="font-size:12px;color:var(--text-secondary)">${w.time}</span>
+        <button class="undo-btn" onclick="removeWriteoff(${i})" aria-label="Smazat odpis">
+          <i class="ti ti-x" aria-hidden="true"></i>
+        </button>
+      </div>`,
+            )
+            .join("");
+        } else {
+          wCard.style.display = "none";
+        }
+      }
+
+      function renderSummary() {
+        const el = document.getElementById("summary-content");
+        if (!state.started) {
+          el.innerHTML = `<div class="warning"><i class="ti ti-info-circle" aria-hidden="true"></i><span>Směna ještě nezačala</span></div>`;
+          return;
+        }
+        const t = calcTotals();
+        const expectedCash = state.deposit + t.revenue;
+        const actualCash = state.deposit + t.revenue + t.tips;
+        el.innerHTML = `
+    <div class="stat-grid">
+      <div class="stat"><div class="stat-label">Ofic. tržba</div><div class="stat-value green">${fmt(t.revenue)}</div></div>
+      <div class="stat"><div class="stat-label">Dýško</div><div class="stat-value amber">${fmt(t.tips)}</div></div>
+      <div class="stat"><div class="stat-label">Prodáno</div><div class="stat-value blue">${fmtKg(t.weightSold)}</div></div>
+      <div class="stat"><div class="stat-label">Odepsáno</div><div class="stat-value red">${fmtKg(t.weightOff)}</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><i class="ti ti-cash" aria-hidden="true"></i>Výpočet pokladny (v kase)</div>
+      <div class="summary-row"><span class="label">Záloha</span><span>${fmt(state.deposit)}</span></div>
+      <div class="summary-row"><span class="label">+ Oficiální tržba</span><span style="color:var(--green)">+ ${fmt(t.revenue)}</span></div>
+      <hr>
+      <div class="summary-row total"><span>Očekávaná hotovost</span><span style="color:var(--green)">${fmt(expectedCash)}</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><i class="ti ti-wallet" aria-hidden="true"></i>Fakticky v kase (s dýškem)</div>
+      <div class="summary-row"><span class="label">Očekávaná hotovost</span><span>${fmt(expectedCash)}</span></div>
+      <div class="summary-row"><span class="label">+ Dýško prodavače</span><span style="color:var(--amber)">+ ${fmt(t.tips)}</span></div>
+      <hr>
+      <div class="summary-row total"><span>Celkem v kase</span><span style="color:var(--amber)">${fmt(actualCash)}</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><i class="ti ti-info-circle" aria-hidden="true"></i>Přehled dne</div>
+      <div class="summary-row"><span class="label">Celkem prodejů</span><span>${state.sales.length}</span></div>
+      <div class="summary-row"><span class="label">Počet odpisů</span><span>${state.writeoffs.length}</span></div>
+      <div class="summary-row"><span class="label">Jahody celkem (prodej + odpis)</span><span>${fmtKg(t.weightSold + t.weightOff)}</span></div>
+    </div>
+    <button class="btn btn-secondary" onclick="newShift()">
+      <i class="ti ti-refresh" aria-hidden="true"></i>Začít novou směnu
+    </button>`;
+      }
+
+      function renderSettings() {
+        const el = document.getElementById("price-list");
+        if (!presets.length) {
+          el.innerHTML =
+            '<div class="empty" style="padding:16px 0"><i class="ti ti-tags" aria-hidden="true"></i><p>Zatím žádné položky</p></div>';
+          return;
+        }
+        el.innerHTML = presets
+          .map(
+            (p, i) => `
+    <div class="price-item">
+      <div class="price-info">
+        <div class="price-main">${fmtKg(p.weight)}</div>
+        <div class="price-sub">${fmt(p.price)}</div>
+      </div>
+      <button class="undo-btn" onclick="startEditPreset(${p.id})" aria-label="Upravit položku" style="color:var(--green)">
+        <i class="ti ti-edit" aria-hidden="true"></i>
+      </button>
+      <button class="undo-btn" onclick="deletePreset(${p.id})" aria-label="Smazat položku">
+        <i class="ti ti-trash" aria-hidden="true"></i>
+      </button>
+    </div>`,
+          )
+          .join("");
+      }
+
+      function savePreset() {
+        const w = parseFloat(document.getElementById("new-weight").value);
+        const p = parseFloat(document.getElementById("new-price").value);
+        if (isNaN(w) || w <= 0) {
+          alert("Zadejte správnou váhu");
+          return;
+        }
+        if (isNaN(p) || p <= 0) {
+          alert("Zadejte správnou cenu");
+          return;
+        }
+
+        if (editingPresetId !== null) {
+          const idx = presets.findIndex((x) => x.id === editingPresetId);
+          if (idx !== -1)
+            presets[idx] = { ...presets[idx], weight: w, price: p };
+          editingPresetId = null;
+        } else {
+          const newId = presets.length
+            ? Math.max(...presets.map((x) => x.id)) + 1
+            : 1;
+          presets.push({ id: newId, weight: w, price: p });
+        }
+        savePresets();
+        document.getElementById("new-weight").value = "";
+        document.getElementById("new-price").value = "";
+        cancelEditPreset();
+        renderSettings();
+      }
+
+      function startEditPreset(id) {
+        const p = presets.find((x) => x.id === id);
+        if (!p) return;
+        editingPresetId = id;
+        document.getElementById("new-weight").value = p.weight;
+        document.getElementById("new-price").value = p.price;
+        document.getElementById("preset-form-title").innerHTML =
+          '<i class="ti ti-edit" aria-hidden="true"></i>Upravit položku';
+        document.getElementById("preset-save-label").textContent = "Uložit";
+        document.getElementById("cancel-edit-btn").style.display = "";
+        document.getElementById("new-weight").focus();
+        document
+          .getElementById("new-weight")
+          .scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+
+      function cancelEditPreset() {
+        editingPresetId = null;
+        document.getElementById("new-weight").value = "";
+        document.getElementById("new-price").value = "";
+        document.getElementById("preset-form-title").innerHTML =
+          '<i class="ti ti-plus" aria-hidden="true"></i>Přidat položku';
+        document.getElementById("preset-save-label").textContent = "Přidat";
+        document.getElementById("cancel-edit-btn").style.display = "none";
+      }
+
+      function deletePreset(id) {
+        presets = presets.filter((x) => x.id !== id);
+        savePresets();
+        if (selectedPresetId === id) selectedPresetId = null;
+        renderSettings();
+      }
+
+      function updateTipPreview() {
+        const p = presets.find((x) => x.id === selectedPresetId);
+        if (!p) return;
+        const price = p.price;
+        const r =
+          parseFloat(document.getElementById("sale-received").value) || 0;
+        const tip = r - price;
+        const hint = document.getElementById("tip-preview");
+        const icon = document.getElementById("tip-icon");
+        const text = document.getElementById("tip-preview-text");
+        if (r > 0) {
+          hint.style.display = "flex";
+          if (tip > 0) {
+            hint.style.background = "var(--green-light)";
+            hint.style.color = "var(--green-text)";
+            icon.className = "ti ti-heart";
+            text.textContent = "Do kapsy: " + fmt(tip);
+          } else if (tip === 0) {
+            hint.style.background = "var(--bg-secondary)";
+            hint.style.color = "var(--text-secondary)";
+            icon.className = "ti ti-check";
+            text.textContent = "Bez dýška";
+          } else {
+            hint.style.background = "var(--amber-light)";
+            hint.style.color = "var(--amber-text)";
+            icon.className = "ti ti-alert-triangle";
+            text.textContent = "Zákazník dal méně o " + fmt(-tip);
+          }
+        } else {
+          hint.style.display = "none";
+        }
+      }
+      document
+        .getElementById("sale-received")
+        .addEventListener("input", updateTipPreview);
+
+      renderShift();
+      renderSalesTab();
+      updateBadge();
+    </script>
+  </body>
+</html>

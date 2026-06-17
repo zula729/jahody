@@ -1136,6 +1136,7 @@
         const t = calcTotals();
         const expectedCash = state.deposit + t.revenue;
         const actualCash = state.deposit + t.revenue + t.tips;
+        
         el.innerHTML = `
     <div class="stat-grid">
       <div class="stat"><div class="stat-label">Ofic. tržba</div><div class="stat-value green">${fmt(t.revenue)}</div></div>
@@ -1163,6 +1164,12 @@
       <div class="summary-row"><span class="label">Počet odpisů</span><span>${state.writeoffs.length}</span></div>
       <div class="summary-row"><span class="label">Jahody celkem (prodej + odpis)</span><span>${fmtKg(t.weightSold + t.weightOff)}</span></div>
     </div>
+    <button class="btn btn-secondary" onclick="newShift()">
+      <i class="ti ti-refresh" aria-hidden="true"></i>Začít novou směnu
+    </button>
+    <button class="btn btn-primary" onclick="exportCSV()" style="margin-bottom: 12px;">
+      <i class="ti ti-download" aria-hidden="true"></i>Export do CSV
+    </button>
     <button class="btn btn-secondary" onclick="newShift()">
       <i class="ti ti-refresh" aria-hidden="true"></i>Začít novou směnu
     </button>`;
@@ -1296,6 +1303,18 @@
       renderShift();
       renderSalesTab();
       updateBadge();
+      function exportCSV() {
+        let csv = "Typ,Vaha (kg),Cena (Kc),Prijato (Kc),Cas\n";
+        state.sales.forEach(s => csv += `Prodej,${s.weight},${s.price},${s.received},${s.time}\n`);
+        state.writeoffs.forEach(w => csv += `Odpis,${w.weight},0,0,${w.time}\n`);
+        
+        // Добавляем BOM, чтобы Excel корректно читал кодировку UTF-8
+        const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `smena_${new Date().toISOString().slice(0,10)}.csv`;
+        link.click();
+      }
     </script>
   </body>
 </html>
